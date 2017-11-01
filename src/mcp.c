@@ -236,7 +236,7 @@ mcp_get_dist_opt(struct dist_opt *dopt, char *line)
 
     /*
      * Parse any distribution value specified as:
-     *   --distribution [d|u|e]T1[,T2]
+     *   --distribution [d|u|e|z]T1[,T2]
      */
     switch (*line) {
     case 'd':
@@ -259,6 +259,10 @@ mcp_get_dist_opt(struct dist_opt *dopt, char *line)
         line++;
         break;
 
+    case 'z':
+        dopt->type = DIST_ZIPF;
+        line++;
+        break;
     default:
         dopt->type = DIST_NONE;
         break;
@@ -292,6 +296,7 @@ mcp_get_dist_opt(struct dist_opt *dopt, char *line)
         break;
 
     case DIST_UNIFORM:
+    case DIST_ZIPF:
         pos = strchr(line, ',');
         if (pos == NULL) {
             log_stderr("mcperf: invalid uniform distribution value '%s'", line);

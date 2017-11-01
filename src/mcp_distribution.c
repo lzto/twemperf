@@ -52,6 +52,45 @@ dist_next_sequential(struct dist_info *di)
     di->next_val = di->min++;
 }
 
+//zipfian, a=0.99
+#define ZIPF_THETA 0.99
+static double
+zipf_zeta(double N, double theta)
+{
+    double ans = 0.0;
+    for(int i=1;i<=N;i++)
+    {
+        ans = ans + pow(1.0/N, theta);
+    }
+    return ans;
+}
+
+static void
+dist_next_zipf(struct dist_info *di)
+{
+    di->next_id++;
+    double theta = ZIPF_THETA;
+    double N = di->max - di->min;
+    double alpha = 1.0 / (1.0 - theta);
+    double zetan = di->zeta;//load pre-computed zeta
+    double eta
+        = (1.0 - pow(2.0/N, 1.0-theta)) /
+          (1.0 - zipf_zeta(2.0,theta)/zetan);
+    double u = erand48(di->xsubi);
+    double uz = u * zetan;
+    if (uz<1.0)
+    {
+        di->next_val = di->min + 1.0;
+    }else if (uz<1+pow(0.5,theta))
+    {
+        di->next_val = di->min + 2.0;
+    }else
+    {
+        di->next_val
+            = di->min + 1.0 + (N * pow(eta*u - eta + 1.0, alpha));
+    }
+}
+
 void
 dist_init(struct dist_info *di, dist_type_t type, double min, double max,
           uint32_t id)
@@ -84,6 +123,11 @@ dist_init(struct dist_info *di, dist_type_t type, double min, double max,
 
     case DIST_SEQUENTIAL:
         di->next = dist_next_sequential;
+        break;
+
+    case DIST_ZIPF:
+        di->zeta = zipf_zeta(max-min+1, ZIPF_THETA);
+        di->next = dist_next_zipf;
         break;
 
     default:

@@ -29,6 +29,7 @@ typedef enum dist_type {
     DIST_UNIFORM,       /* uniform over interval [min, max) */
     DIST_EXPONENTIAL,   /* poisson with mean */
     DIST_SEQUENTIAL,    /* sequential or monotonic */
+    DIST_ZIPF,          /* zipfian */
     DIST_SENTINEL
 } dist_type_t;
 
@@ -48,6 +49,7 @@ struct dist_info {
     dist_next_t next;      /* next handler */
     uint32_t    next_id;   /* next distribution value id */
     double      next_val;  /* next distribution value */
+    double      zeta;      /* for zipf's zeta */
 };
 
 void dist_init(struct dist_info *di, dist_type_t type, double min, double max, uint32_t id);
