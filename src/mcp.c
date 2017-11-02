@@ -74,6 +74,11 @@ static int show_version;
 #define MCP_SIZE_DIST_MIN    1
 #define MCP_SIZE_DIST_MAX    1
 
+#define MCP_KEY_DIST_STR     "s"
+#define MCP_KEY_DIST         DIST_SEQUENTIAL
+#define MCP_KEY_DIST_MIN     0
+#define MCP_KEY_DIST_MAX     0
+
 #define MCP_PRINT_RUSAGE     0
 
 static struct option long_options[] = {
@@ -99,10 +104,11 @@ static struct option long_options[] = {
     { "conn-rate",          required_argument,  NULL,   'r' },
     { "call-rate",          required_argument,  NULL,   'R' },
     { "sizes",              required_argument,  NULL,   'z' },
+    { "keys",               required_argument,  NULL,   'k' },
     { NULL,                 0,                  NULL,    0  }
 };
 
-static char short_options[] = "hVv:o:s:p:Ht:l:b:B:Dm:e:qP:c:n:N:r:R:z:";
+static char short_options[] = "hVv:o:s:p:Ht:l:b:B:Dm:e:qP:c:n:N:r:R:z:k:";
 
 static void
 mcp_show_usage(void)
@@ -155,9 +161,10 @@ mcp_show_usage(void)
         "  -r, --conn-rate=R     : set the connection creation rate (default: %s conns/sec) "CRLF
         "  -R, --call-rate=R     : set the call creation rate (default: %s calls/sec)" CRLF
         "  -z, --sizes=R         : set the distribution for item sizes (default: %s bytes)" CRLF
+        "  -k, --keys=R          : set the distribution for key (default: %s)" CRLF
         "  ...",
         MCP_CLIENT_ID, MCP_CLIENT_N, MCP_NUM_CONNS, MCP_NUM_CALLS,
-        MCP_CONN_DIST_STR, MCP_CALL_DIST_STR, MCP_SIZE_DIST_STR
+        MCP_CONN_DIST_STR, MCP_CALL_DIST_STR, MCP_SIZE_DIST_STR, MCP_KEY_DIST_STR
         );
 
     log_stderr(
@@ -225,6 +232,11 @@ mcp_set_default_options(struct context *ctx)
     opt->size_dopt.type = MCP_SIZE_DIST;
     opt->size_dopt.min = MCP_SIZE_DIST_MIN;
     opt->size_dopt.max = MCP_SIZE_DIST_MAX;
+
+    /* default key id generator */
+    opt->key_dopt.type = MCP_KEY_DIST;
+    opt->key_dopt.min = MCP_KEY_DIST_MIN;
+    opt->key_dopt.max = MCP_KEY_DIST_MAX;
 
     opt->print_rusage = MCP_PRINT_RUSAGE;
 }
@@ -562,6 +574,13 @@ mcp_get_options(struct context *ctx, int argc, char **argv)
             }
             break;
 
+        case 'k':
+            status = mcp_get_dist_opt(&opt->key_dopt, optarg);
+            if (status != MCP_OK) {
+                return status;
+            }
+            break;
+
         case '?':
             switch (optopt) {
             case 'o':
@@ -644,6 +663,9 @@ mcp_pre_run(struct context *ctx)
 
     dist_init(&ctx->size_dist, opt->size_dopt.type, opt->size_dopt.min,
               opt->size_dopt.max, opt->client.id);
+
+    dist_init(&ctx->key_dist, opt->key_dopt.type, opt->key_dopt.min,
+              opt->key_dopt.max, opt->client.id);
 
     /* initialize stats subsystem */
     stats_init(ctx);

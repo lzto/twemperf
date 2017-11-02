@@ -23,7 +23,6 @@
 static void
 dist_next_deterministic(struct dist_info *di)
 {
-    di->next_id++;
     di->next_val = 0.5 * (di->min + di->max);
 }
 
@@ -32,7 +31,6 @@ dist_next_uniform(struct dist_info *di)
 {
     double lower = di->min, upper = di->max;
 
-    di->next_id++;
     di->next_val = lower + (upper - lower) * erand48(di->xsubi);
 }
 
@@ -41,14 +39,12 @@ dist_next_exponential(struct dist_info *di)
 {
     double mean = 0.5 * (di->min + di->max);
 
-    di->next_id++;
     di->next_val = -mean * log(1.0 - erand48(di->xsubi));
 }
 
 static void
 dist_next_sequential(struct dist_info *di)
 {
-    di->next_id++;
     di->next_val = di->min++;
 }
 
@@ -68,7 +64,6 @@ zipf_zeta(double N, double theta)
 static void
 dist_next_zipf(struct dist_info *di)
 {
-    di->next_id++;
     double theta = ZIPF_THETA;
     double N = di->max - di->min;
     double alpha = 1.0 / (1.0 - theta);
@@ -133,6 +128,5 @@ dist_init(struct dist_info *di, dist_type_t type, double min, double max,
     default:
         NOT_REACHED();
     }
-    di->next_id = 0;
     di->next_val = 0.0;
 }

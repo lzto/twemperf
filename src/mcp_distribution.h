@@ -47,7 +47,6 @@ struct dist_info {
     double      max;       /* maximum value */
 
     dist_next_t next;      /* next handler */
-    uint32_t    next_id;   /* next distribution value id */
     double      next_val;  /* next distribution value */
     double      zeta;      /* for zipf's zeta */
 };

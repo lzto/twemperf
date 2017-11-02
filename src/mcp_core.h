@@ -70,8 +70,10 @@ typedef enum event_type {
     EVENT_GEN_CALL_FIRE     = 18,
     EVENT_GEN_SIZE_TRIGGER  = 19,
     EVENT_GEN_SIZE_FIRE     = 20,
+    EVENT_GEN_KEY_TRIGGER   = 21,
+    EVENT_GEN_KEY_FIRE      = 22,
 
-    MAX_EVENT_TYPES         = 21
+    MAX_EVENT_TYPES         = 23
 } event_type_t;
 
 #include <stddef.h>
@@ -128,6 +130,7 @@ struct opt {
     struct dist_opt   conn_dopt;         /* conn distribution option */
     struct dist_opt   call_dopt;         /* call distribution option */
     struct dist_opt   size_dopt;         /* size distribution option */
+    struct dist_opt   key_dopt;          /* key distribution option */
 
     unsigned          print_histogram:1; /* print response time histogram? */
     unsigned          disable_nodelay:1; /* disable_nodelay? */
@@ -151,9 +154,11 @@ struct context {
     struct dist_info   conn_dist;               /* conn generator distribution */
     struct dist_info   call_dist;               /* call generator distribution */
     struct dist_info   size_dist;               /* size generator distribution */
+    struct dist_info   key_dist;                /* key id distribution */
 
     struct gen         conn_gen;                /* connection generator */
     struct gen         size_gen;                /* size generator */
+    struct gen         key_gen;                 /* key generator */
 
     struct action      action[MAX_EVENT_TYPES]; /* event actions */
 

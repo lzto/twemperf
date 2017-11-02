@@ -477,7 +477,8 @@ void
 call_make_req(struct context *ctx, struct call *call)
 {
     struct opt *opt = &ctx->opt;
-    struct dist_info *di = &ctx->size_dist;
+    struct dist_info *key_di = &ctx->key_dist;
+    struct dist_info *size_di = &ctx->size_dist;
     uint32_t key_id;
     long int key_vlen;
 
@@ -488,8 +489,10 @@ call_make_req(struct context *ctx, struct call *call)
      * Get the current item id and size from the distribution, and
      * call into the size generator to move to the next value
      */
-    key_id = di->next_id;
-    key_vlen = lrint(di->next_val);
+    key_id = (uint32_t)key_di->next_val;
+    ecb_signal(ctx, EVENT_GEN_KEY_FIRE, &ctx->key_gen);
+
+    key_vlen = lrint(size_di->next_val);
     ecb_signal(ctx, EVENT_GEN_SIZE_FIRE, &ctx->size_gen);
 
     switch (opt->method) {

@@ -9,4 +9,5 @@ noinst_LIBRARIES = libgen.a
 libgen_a_SOURCES =		\
 	mcp_call_generator.c	\
 	mcp_conn_generator.c	\
-	mcp_size_generator.c
+	mcp_size_generator.c    \
+	mcp_key_generator.c

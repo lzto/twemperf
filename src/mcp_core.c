@@ -20,10 +20,12 @@
 
 #include <mcp_core.h>
 
-extern struct load_generator size_generator, conn_generator, call_generator;
+extern struct load_generator key_generator, size_generator,
+              conn_generator, call_generator;
 extern struct stats_collector conn_stats, call_stats;
 
 static struct load_generator *gen[] = {   /* load generators */
+    &key_generator,
     &size_generator,
     &conn_generator,
     &call_generator
@@ -90,6 +92,7 @@ core_start(struct context *ctx)
      * Before the connection generator is triggered, all its dependent
      * generators must be triggered.
      */
+    ecb_signal(ctx, EVENT_GEN_KEY_TRIGGER, NULL);
     ecb_signal(ctx, EVENT_GEN_SIZE_TRIGGER, NULL);
 
     /* start the connection generator by triggering it */
