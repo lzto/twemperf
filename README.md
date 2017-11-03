@@ -36,6 +36,7 @@ To build mcperf from source in _debug mode_:
                   [-m method] [-e expiry] [-q] [-P prefix]
                   [-c client] [-n num-conns] [-N num-calls]
                   [-r conn-rate] [-R call-rate] [-z sizes]
+                  [-k key-dist]
 
     Options:
       -h, --help            : this help
@@ -63,6 +64,7 @@ To build mcperf from source in _debug mode_:
       -r, --conn-rate=R     : set the connection creation rate (default: 0 conns/sec)
       -R, --call-rate=R     : set the call creation rate (default: 0 calls/sec)
       -z, --sizes=R         : set the distribution for item sizes (default: d1 bytes)
+      -k, --keys=R          : set the distribution for key (default: s)
       ...
     Where:
       N is an integer
@@ -71,7 +73,7 @@ To build mcperf from source in _debug mode_:
       M is a method string and is either a 'get', 'gets', 'delete', 'cas', 'set', 'add', 'replace'
       'append', 'prepend', 'incr', 'decr'
       R is the rate written as [D]R1[,R2] where:
-      D is the distribution type and is either deterministic 'd', uniform 'u', or exponential 'e' and if:
+      D is the distribution type and is either deterministic 'd', uniform 'u', exponential 'e' or zipfian 'z'  and if:
       D is ommited or set to 'd', a deterministic interval specified by parameter R1 is used
       D is set to 'e', an exponential distibution with mean interval of R1 is used
       D is set to 'u', a uniform distribution over interval [R1, R2) is used
