@@ -56,7 +56,7 @@ zipf_zeta(double N, double theta)
     double ans = 0.0;
     for(int i=1;i<=N;i++)
     {
-        ans = ans + pow(1.0/N, theta);
+        ans = ans + 1.0/pow(i, theta);
     }
     return ans;
 }
@@ -65,7 +65,7 @@ static void
 dist_next_zipf(struct dist_info *di)
 {
     double theta = ZIPF_THETA;
-    double N = di->max - di->min;
+    double N = di->max - di->min + 1.0;
     double alpha = 1.0 / (1.0 - theta);
     double zetan = di->zeta;//load pre-computed zeta
     double eta
@@ -121,7 +121,7 @@ dist_init(struct dist_info *di, dist_type_t type, double min, double max,
         break;
 
     case DIST_ZIPF:
-        di->zeta = zipf_zeta(max-min+1, ZIPF_THETA);
+        di->zeta = zipf_zeta(max-min+1.0, ZIPF_THETA);
         di->next = dist_next_zipf;
         break;
 

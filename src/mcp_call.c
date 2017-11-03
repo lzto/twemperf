@@ -489,7 +489,7 @@ call_make_req(struct context *ctx, struct call *call)
      * Get the current item id and size from the distribution, and
      * call into the size generator to move to the next value
      */
-    key_id = (uint32_t)key_di->next_val;
+    key_id = lrint(key_di->next_val);
     ecb_signal(ctx, EVENT_GEN_KEY_FIRE, &ctx->key_gen);
 
     key_vlen = lrint(size_di->next_val);
